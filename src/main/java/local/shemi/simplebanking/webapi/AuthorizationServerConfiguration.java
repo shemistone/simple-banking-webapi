@@ -5,15 +5,11 @@
  */
 package local.shemi.simplebanking.webapi;
 
-import java.util.ArrayList;
-import java.util.List;
-import local.shemi.simplebanking.webapi.client.Client;
+import local.shemi.simplebanking.webapi.client.PostgresClientDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
@@ -21,9 +17,6 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
-import org.springframework.security.oauth2.provider.ClientDetailsService;
-import org.springframework.security.oauth2.provider.ClientRegistrationException;
-import org.springframework.security.oauth2.provider.client.BaseClientDetails;
 
 /**
  *
@@ -36,7 +29,7 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     @Autowired
     private AuthenticationManager authenticationManager;
     @Autowired
-    private ClientDetailsService clientDetailsService;
+    private PostgresClientDetailsService clientDetailsService;
 
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
@@ -56,24 +49,24 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
 //                .authorizedGrantTypes("client_credentials")
 //                .accessTokenValiditySeconds(120)
 //                .refreshTokenValiditySeconds(600);
-        clients.withClientDetails((String clientId) -> {
-            Client client = new Client(clientId, passwordEncoder().encode("password_a"));
-            if (client == null) {
-                throw new ClientRegistrationException("Client not found: " + clientId);
-            }
-            BaseClientDetails clientDetails = new BaseClientDetails();
-            clientDetails.setClientId(clientId);
-            clientDetails.setClientSecret(client.getPassword());
-            clientDetails.setAuthorizedGrantTypes(List.of("client_credentials"));
-            clientDetails.setScope(List.of("all"));
-            List<GrantedAuthority> authorities = new ArrayList<>();
-            authorities.add(new SimpleGrantedAuthority("ROLE_A"));
-            clientDetails.setAuthorities(authorities);
-            clientDetails.setAccessTokenValiditySeconds(120);
-            clientDetails.setRefreshTokenValiditySeconds(600);
-            return clientDetails;
-        });
-//        clients.withClientDetails(clientDetailsService);
+//        clients.withClientDetails((String clientId) -> {
+//            Client client = new Client(clientId, passwordEncoder().encode("password_a"));
+//            if (client == null) {
+//                throw new ClientRegistrationException("Client not found: " + clientId);
+//            }
+//            BaseClientDetails clientDetails = new BaseClientDetails();
+//            clientDetails.setClientId(clientId);
+//            clientDetails.setClientSecret(client.getPassword());
+//            clientDetails.setAuthorizedGrantTypes(List.of("client_credentials"));
+//            clientDetails.setScope(List.of("all"));
+//            List<GrantedAuthority> authorities = new ArrayList<>();
+//            authorities.add(new SimpleGrantedAuthority("ROLE_A"));
+//            clientDetails.setAuthorities(authorities);
+//            clientDetails.setAccessTokenValiditySeconds(120);
+//            clientDetails.setRefreshTokenValiditySeconds(600);
+//            return clientDetails;
+//        });
+        clients.withClientDetails(clientDetailsService);
     }
 
     @Override
