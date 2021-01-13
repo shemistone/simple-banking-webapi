@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -26,30 +27,40 @@ public class AccountController {
     @Autowired
     private AccountService service;
 
-    @GetMapping("/customers/{customerId}/accounts")
-    public ResponseEntity<List<Account>> findAll(@PathVariable String customerId) {
-        return ResponseEntity.ok(service.findAll(customerId));
+    @GetMapping("/accounts/{account-no}")
+    public ResponseEntity<Account> findOne(@PathVariable("account-no") String accountNo) {
+        return ResponseEntity.of(service.findByAccountNo(accountNo));
     }
 
-    @GetMapping("/customers/{customerId}/accounts/{id}")
-    public ResponseEntity<Account> findAll(@PathVariable String customerId, @PathVariable String id) {
+    @GetMapping("/accounts")
+    public ResponseEntity<List<Account>> find(@RequestParam("customer-code") String customerCode) {
+        return ResponseEntity.ok(service.findByCustomerCode(customerCode));
+    }
+
+    @GetMapping("/customers/{customerCode}/accounts")
+    public ResponseEntity<List<Account>> findCustomerAccounts(@PathVariable String customerCode) {
+        return ResponseEntity.ok(service.findByCustomerCode(customerCode));
+    }
+
+    @GetMapping("/customers/{customerCode}/accounts/{id}")
+    public ResponseEntity<Account> findCustomerAccount(@PathVariable String customerCode, @PathVariable String id) {
         return ResponseEntity.of(service.findById(id));
     }
 
-    @PostMapping("/customers/{customerId}/accounts")
-    public void insert(@RequestBody Account account, @PathVariable String customerId) {
-        account.setCustomerId(customerId);
+    @PostMapping("/customers/{customerCode}/accounts")
+    public void insert(@RequestBody Account account, @PathVariable String customerCode) {
+        account.setCustomerCode(customerCode);
         service.insert(account);
     }
 
-    @PutMapping("/customers/{customerId}/accounts/{id}")
-    public void update(@RequestBody Account account, @PathVariable String customerId, @PathVariable String id) {
-        account.setCustomerId(customerId);
+    @PutMapping("/customers/{customerCode}/accounts/{id}")
+    public void update(@RequestBody Account account, @PathVariable String customerCode, @PathVariable String id) {
+        account.setCustomerCode(customerCode);
         service.update(account);
     }
 
-    @DeleteMapping("/customers/{customerId}/accounts/{id}")
-    public ResponseEntity<Customer> delete(@PathVariable String customerId, @PathVariable String id) {
+    @DeleteMapping("/customers/{customerCode}/accounts/{id}")
+    public ResponseEntity<Customer> delete(@PathVariable String customerCode, @PathVariable String id) {
         service.delete(id);
         return ResponseEntity.ok().build();
     }

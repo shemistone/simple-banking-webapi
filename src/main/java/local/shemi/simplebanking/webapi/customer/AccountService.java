@@ -20,8 +20,12 @@ public class AccountService {
     @Autowired
     private AccountRespository repository;
 
-    public List<Account> findAll(String customerId) {
-        return repository.findByCustomerId(customerId);
+    public Optional<Account> findByAccountNo(String accountNo) {
+        return repository.findByAccountNo(accountNo);
+    }
+
+    public List<Account> findByCustomerCode(String customerCode) {
+        return repository.findByCustomerCode(customerCode);
     }
 
     public Optional<Account> findById(String id) {
@@ -29,7 +33,7 @@ public class AccountService {
     }
 
     public void insert(Account account) {
-        repository.insert(account.getId(), account.getName(), account.getCustomerId());
+        repository.insert(account.getId(), account.getName(), account.getCustomerCode());
     }
 
     public void update(Account account) {

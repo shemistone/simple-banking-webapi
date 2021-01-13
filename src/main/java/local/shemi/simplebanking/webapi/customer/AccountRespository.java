@@ -6,6 +6,7 @@
 package local.shemi.simplebanking.webapi.customer;
 
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -19,10 +20,18 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AccountRespository extends CrudRepository<Account, String> {
 
-    List<Account> findByCustomerId(String customerId);
+    @Override
+    @Query("select account_no, account_name, customer_code from vw_accounts where account_no = :id")
+    Optional<Account> findById(@Param("id") String id);
+
+    @Query("select account_no, account_name, customer_code from vw_accounts where account_no = :accountNo")
+    Optional<Account> findByAccountNo(@Param("accountNo") String accountNo);
+
+    @Query("select account_no, account_name, customer_code from  vw_accounts where customer_code = :customerCode")
+    List<Account> findByCustomerCode(@Param("customerCode") String customerCode);
 
     @Modifying
-    @Query("insert into account (id, name, customer_id) values (:id, :name, :customerCode)")
+    @Query("insert into account (id, name, customer_code) values (:id, :name, :customerCode)")
     void insert(@Param("id") String id, @Param("name") String name, @Param("customerCode") String customerCode);
 
 }

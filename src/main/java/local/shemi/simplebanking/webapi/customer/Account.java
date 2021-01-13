@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
+import org.springframework.data.relational.core.mapping.Column;
 
 /**
  * Created by shemistone on 13/07/17.
@@ -11,11 +12,24 @@ import org.springframework.data.annotation.Transient;
 public class Account {
 
     @Id
+    @Column("account_no")
     private String id = "";
+    @Column("account_name")
     private String name = "";
-    private String customerId = "";
+    private String customerCode = "";
+    @Transient
+    private Customer customer = new Customer();
     @Transient
     private List<AtmCard> atmCards = new ArrayList<>();
+
+    public Account() {
+    }
+
+    public Account(String id, String name, String customerCode) {
+        this.id = id;
+        this.name = name;
+        this.customerCode = customerCode;
+    }
 
     public String getId() {
         return id;
@@ -33,12 +47,20 @@ public class Account {
         this.name = name;
     }
 
-    public String getCustomerId() {
-        return customerId;
+    public String getCustomerCode() {
+        return customerCode;
     }
 
-    public void setCustomerId(String customerId) {
-        this.customerId = customerId;
+    public void setCustomerCode(String customerCode) {
+        this.customerCode = customerCode;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
     public List<AtmCard> getAtmCards() {
