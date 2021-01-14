@@ -8,6 +8,7 @@ package local.shemi.simplebanking.webapi.customer;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +29,7 @@ public class CustomerService {
         return customers;
     }
 
-    public Customer find(String id) {
+    public Optional<Customer> find(String id) {
         return repository.findByMobileNo(id);
     }
 

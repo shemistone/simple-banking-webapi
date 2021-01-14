@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -42,7 +43,7 @@ public class CustomerRepository {
         return jdbcTemplate.query(SQL, new CustomerRowMapper());
     }
 
-    public Customer findByMobileNo(String id) {
+    public Optional<Customer> findByMobileNo(String id) {
         final String SQL = "select "
                 + "id, "
                 + "first_name, "
@@ -56,7 +57,7 @@ public class CustomerRepository {
                 + "time_updated "
                 + "from customer "
                 + "where mobile_no = ?";
-        return jdbcTemplate.queryForObject(SQL, new CustomerRowMapper(), id);
+        return Optional.ofNullable(jdbcTemplate.queryForObject(SQL, new CustomerRowMapper(), id));
     }
 
     public int update(Customer customer) {

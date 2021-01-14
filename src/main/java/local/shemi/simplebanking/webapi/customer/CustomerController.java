@@ -6,6 +6,7 @@
 package local.shemi.simplebanking.webapi.customer;
 
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,11 +35,16 @@ public class CustomerController {
 
     @GetMapping("/customers/{id}")
     public ResponseEntity<Customer> find(@PathVariable String id) {
-        return ResponseEntity.ok(service.find(id));
+        Optional<Customer> customer = service.find(id);
+        if (customer.isPresent()) {
+            return ResponseEntity.of(customer);
+        } else {
+            return ResponseEntity.noContent().build();
+        }
     }
 
     @PostMapping("/customers")
-    public ResponseEntity<Customer> update(@RequestBody Customer customer) {
+    public ResponseEntity<Customer> insert(@RequestBody Customer customer) {
         service.insert(customer);
         return ResponseEntity.status(HttpStatus.CREATED).body(customer);
     }
