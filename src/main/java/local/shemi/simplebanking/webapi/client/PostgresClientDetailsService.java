@@ -43,11 +43,16 @@ public class PostgresClientDetailsService implements ClientDetailsService {
         clientDetails.setClientId(clientId);
         clientDetails.setClientSecret(client.getPassword());
         clientDetails.setAuthorizedGrantTypes(List.of("client_credentials"));
-        List<String> permissions = new ArrayList<>();
-        clientPermissionRepository.findAllByClientId(clientId).forEach(p -> permissions.add(p.getPermission().getName()));
-        clientDetails.setScope(permissions);
         List<GrantedAuthority> authorities = new ArrayList<>();
-        clientRoleRepository.findAllByClientId(clientId).forEach(r -> authorities.add(new SimpleGrantedAuthority(r.getRole().getName())));
+        clientRoleRepository.findAllByClientId(clientId).forEach(r -> {
+            authorities.add(new SimpleGrantedAuthority("ROLE_" + r.getRole().getName()));
+        });
+        List<String> permissions = new ArrayList<>();
+        clientPermissionRepository.findAllByClientId(clientId).forEach(p -> {
+            authorities.add(new SimpleGrantedAuthority(p.getPermission().getName()));
+            permissions.add(p.getPermission().getName());
+        });
+        clientDetails.setScope(permissions);
         clientDetails.setAuthorities(authorities);
         clientDetails.setResourceIds(List.of("simple-banking-webapi"));
         clientDetails.setAccessTokenValiditySeconds(3600);
