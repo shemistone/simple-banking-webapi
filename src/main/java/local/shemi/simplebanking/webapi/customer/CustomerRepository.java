@@ -32,6 +32,7 @@ public class CustomerRepository {
                 + "first_name, "
                 + "middle_name, "
                 + "last_name, "
+                + "pin, "
                 + "lang, "
                 + "active, "
                 + "mobile_no, "
@@ -49,6 +50,7 @@ public class CustomerRepository {
                 + "first_name, "
                 + "middle_name, "
                 + "last_name, "
+                + "pin, "
                 + "lang, "
                 + "active, "
                 + "mobile_no, "
@@ -57,7 +59,7 @@ public class CustomerRepository {
                 + "time_updated "
                 + "from customer "
                 + "where mobile_no = ?";
-        return Optional.ofNullable(jdbcTemplate.queryForObject(SQL, new CustomerRowMapper(), id));
+        return jdbcTemplate.query(SQL, new CustomerRowMapper(), id).stream().findFirst();
     }
 
     public int update(Customer customer) {
@@ -83,13 +85,14 @@ public class CustomerRepository {
                 + "first_name, "
                 + "middle_name, "
                 + "last_name, "
+                + "pin, "
                 + "lang, "
                 + "active, "
                 + "imsi, "
-                + "failed_logins) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                + "failed_logins) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         jdbcTemplate.update(SQL, UUID.randomUUID(), customer.getMobileNo(),
                 customer.getFirstName(), customer.getMiddleName(), customer.getLastName(),
-                customer.getLang(), customer.isActive(), customer.getImsi(),
+                customer.getPin(), customer.getLang(), customer.isActive(), customer.getImsi(),
                 customer.getFailedLogins());
     }
 
@@ -107,6 +110,7 @@ public class CustomerRepository {
             customer.setFirstName(resultSet.getString("first_name"));
             customer.setMiddleName(resultSet.getString("middle_name"));
             customer.setLastName(resultSet.getString("last_name"));
+            customer.setPin(resultSet.getString("pin"));
             customer.setMobileNo(resultSet.getString("mobile_no"));
             customer.setImsi(resultSet.getString("imsi"));
             customer.setActive(resultSet.getBoolean("active"));
